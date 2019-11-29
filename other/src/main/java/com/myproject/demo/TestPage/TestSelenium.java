@@ -65,8 +65,6 @@ public class TestSelenium {
         parameterMap.put("enableDate", sdf.format(dt));
         parameterMap.put("isSeamless", null);
 
-        httpClientResponse.requestPost
-                ("http://jingangtest.yto56.com.cn/transferfreightweb/transferfreight/frePriceDetail_allSubmit.action",
-                        parameterMap,browserConfig.getCookie());
+        
     }
 }

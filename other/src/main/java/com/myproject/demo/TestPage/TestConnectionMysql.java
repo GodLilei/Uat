@@ -19,7 +19,7 @@ public class TestConnectionMysql {
 
         Tool tool = new Tool();
 
-        System.out.println(tool.selectMySQLMessage(driver,url,user,password,sql));
+        //System.out.println(tool.selectMySQLMessage(driver,url,user,password,sql));
 
 
     }
