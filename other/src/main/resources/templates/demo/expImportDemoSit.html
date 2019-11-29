@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Import</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<style>
+    .mybody{
+        width: 98.5%;
+        margin: 10px 10px auto;
+    }
+</style>
+<body class="mybody">
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>文件导入，支持多文件导入</legend>
+</fieldset>
+
+<div class="layui-upload">
+    <button type="button" class="layui-btn layui-btn-normal" id="chooseFile">选择文件</button>
+    <button type="button" class="layui-btn layui-btn-normal" id="downLoad">模板下载</button>
+    <div class="layui-upload-list">
+        <table class="layui-table">
+            <thead>
+            <tr><th>文件名</th>
+                <th>大小</th>
+                <th>状态</th>
+                <th>操作</th>
+                <th>返回信息</th>
+            </tr></thead>
+            <tbody id="demoList"></tbody>
+        </table>
+    </div>
+    <button type="button" class="layui-btn" id="uploadAction">开始上传</button>
+</div>
+<script src="layui/layui.js"></script>
+<script>
+    layui.use(['table','layer','form','upload'], function() {
+        let form = layui.form;
+        let table = layui.table;
+        let layer = layui.layer;
+        let $ = layui.jquery;
+        let upload = layui.upload;
+
+        let f_flag = window.location.pathname;
+        let ff_flag = f_flag.substr(f_flag.length-3,3);
+
+        $('#downLoad').click(function () {
+            window.location.href = '/Express/template_downLoad_exp';
+        });
+
+        $('#uploadAction').click(function(){
+            let loading = layer.load(1);
+        });
+
+        let demoListView = $('#demoList')
+            ,uploadListIns = upload.render({
+            elem: '#chooseFile'
+            ,url: '/Express/expDataImport' + ff_flag
+            ,accept: 'file'
+            ,multiple: true
+            ,auto: false
+            ,bindAction: '#uploadAction'
+            ,choose: function(obj){
+                let files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                //读取本地文件
+                obj.preview(function(index, file, result){
+                    let tr = $(['<tr id="upload-'+ index +'">'
+                        ,'<td>'+ file.name +'</td>'
+                        ,'<td>'+ (file.size/1014).toFixed(1) +'kb</td>'
+                        ,'<td>等待上传</td>'
+                        ,'<td>'
+                        ,'<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+                        ,'<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
+                        ,'</td>'
+                        ,'<td></td>'
+                        ,'</tr>'].join(''));
+
+                    //单个重传
+                    tr.find('.demo-reload').on('click', function(){
+                        obj.upload(index, file);
+                        let loading = layer.load(1);
+                    });
+
+                    //删除
+                    tr.find('.demo-delete').on('click', function(){
+                        delete files[index]; //删除对应的文件
+                        tr.remove();
+                        uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                    });
+                    demoListView.append(tr);
+                });
+            }
+            ,done: function(res, index, upload){
+                layer.closeAll();
+                let tr = demoListView.find('tr#upload-'+ index)
+                    ,tds = tr.children();
+                if(res.code === '0'){ //上传成功，且数据符合预期
+                    tds.eq(2).html('<span style="color: #5FB878;">' + res.msg + '</span>');
+                    tds.eq(3).html(''); //清空操作
+                    tds.eq(4).html('<span style="color: #5FB878;">' + res.waybill + '</span>');
+                    return delete this.files[index]; //删除文件队列已经上传成功的文件
+                }else{//code=1时，上传成功，但是数据不符合，手动触发error事件
+                    // tds.eq(2).html('<span style="color: #f71754;">' + res.msg + '</span>');
+                    this.error(index, upload);
+                    tds.eq(4).html('<span style="color: #f71754;">' + res.waybill + '</span>');
+                }
+
+            }
+            ,error: function(index, upload){
+                let tr = demoListView.find('tr#upload-'+ index)
+                    ,tds = tr.children();
+                tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+                tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+            }
+        });
+    });
+</script>
+</body>
+</html>

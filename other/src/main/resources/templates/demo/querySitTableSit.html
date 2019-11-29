@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>queryTable</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+</head>
+<style>
+    .mybody{
+        width: 95.5%;
+        margin: auto;
+        margin-top: 20px;
+    }
+    body{
+        background-color: #f2f2f2;
+    }
+</style>
+<body class="mybody">
+<p style="margin-bottom: 15px">选择库IP，然后选择表(注意不同模式(必填))，然后选择需要的字段。
+    <span style="color: red">清注意：SELECT语句不做处理，其余语句可以选择执行(内测版(MyBatis))</span></p>
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">数据库</label>
+            <div class="layui-input-inline">
+                <label for="dataBase"></label>
+                <select id="dataBase" name="database" lay-search="" lay-filter="database">
+                    <option value=""></option>
+                    <option value="SIT" selected>16库</option>
+                </select>
+            </div>
+            <label class="layui-form-label">执行方法</label>
+            <div class="layui-input-inline">
+                <label for="flag"></label>
+                <select id="flag" name="flag" lay-search="" lay-filter="flag">
+                    <option value="" selected></option>
+                    <option value="SELECT">SELECT</option>
+                    <option value="INSERT">INSERT</option>
+                    <option value="UPDATE">UPDATE</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
+            </div>
+            <label class="layui-form-label">表</label>
+            <div class="layui-input-inline">
+                <input type="text" name="tableName" id="tableName" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div id = "select">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">查询列</label>
+                <div class="layui-input-inline">
+                    <label for="selectCol"></label>
+                    <select id="selectCol" name="selectCol" lay-search="" lay-filter="selectCol">
+                        <option value="*">所有</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <button class="layui-btn layui-btn-normal" lay-submit id="selectColBtn" name="selectColBtn"
+                            lay-filter="selectColBtn">选择
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">查询条件</label>
+                <div class="layui-input-inline">
+                    <label for="selectKey"></label>
+                    <select id="selectKey" name="selectKey" lay-search="" lay-filter="selectKey">
+                        <option value="*">所有</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="selectValue" id="selectValue" placeholder="请输入值" autocomplete="off"
+                           class="layui-input">
+                </div>
+                <div class="layui-input-inline">
+                    <button class="layui-btn layui-btn-normal" lay-submit id="selectBtn"
+                            name="selectBtn"
+                            lay-filter="selectBtn">确定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="insert">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">插入值</label>
+                <div class="layui-input-inline">
+                    <label for="insertKey"></label>
+                    <select id="insertKey" name="insertKey" lay-search="" lay-filter="insertKey">
+                        <option value="*">所有</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="insertValue" id="insertValue" placeholder="请输入值" autocomplete="off"
+                           class="layui-input">
+                </div>
+                <div class="layui-input-inline">
+                    <button class="layui-btn layui-btn-normal" lay-submit id="insertBtn"
+                            name="insertBtn"
+                            lay-filter="insertBtn">选择
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="update">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">更新列</label>
+                <div class="layui-input-inline">
+                    <label for="updateColKey"></label>
+                    <select id="updateColKey" name="updateColKey" lay-search="" lay-filter="updateColKey">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="updateColValue" id="updateColValue" placeholder="请输入值" autocomplete="off"
+                           class="layui-input">
+                </div>
+                <div class="layui-input-inline">
+                    <button class="layui-btn layui-btn-normal" lay-submit id="updateColBtn"
+                            name="updateColBtn"
+                            lay-filter="updateColBtn">选择
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">更新条件</label>
+                <div class="layui-input-inline">
+                    <label for="updateKey"></label>
+                    <select id="updateKey" name="updateKey" lay-search="" lay-filter="updateKey">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="updateValue" id="updateValue" placeholder="请输入值" autocomplete="off"
+                           class="layui-input">
+                </div>
+                <div class="layui-input-inline">
+                    <button class="layui-btn layui-btn-normal" lay-submit id="updateBtn"
+                            name="updateBtn"
+                            lay-filter="updateBtn">选择
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="delete">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">删除条件</label>
+                <div class="layui-input-inline">
+                    <label for="deleteKey"></label>
+                    <select id="deleteKey" name="deleteKey" lay-search="" lay-filter="deleteKey">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="deleteValue" id="deleteValue" placeholder="请输入值" autocomplete="off"
+                           class="layui-input">
+                </div>
+                <div class="layui-input-inline">
+                    <button class="layui-btn layui-btn-normal" lay-submit id="deleteBtn"
+                            name="deleteBtn"
+                            lay-filter="deleteBtn">选择
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">SQL预览</label>
+        <div class="layui-input-block">
+                            <textarea placeholder="" class="layui-textarea" name="content"
+                                      id="content" readonly></textarea>
+        </div>
+    </div>
+    <!--<input type="hidden" id="relContent" name="relContent">-->
+</form>
+<table class="layui-table" lay-filter="taskTable" id="taskTable"></table>
+<script src="../layui/jquery-3.3.1.min.js"></script>
+<script src="../layui/layui.js"></script>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container demoTable">
+        <button class="layui-btn layui-btn-sm" lay-event="uploadSelect">上传选中数据</button>
+        <button class="layui-btn layui-btn-sm" lay-event="deleteTable">清空列表</button>
+    </div>
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    layui.use(['element', 'layer','form','laydate','table'], function() {
+        let element = layui.element;
+        let layer = layui.layer;
+        let form = layui.form;
+        let table = layui.table;
+        let $ = layui.jquery;
+
+        let content = '';
+        let contentTable;
+        let valueTable;
+
+        let f_flag = window.location.pathname;
+        let ff_flag = f_flag.substr(f_flag.length-3,3);
+        console.log(ff_flag);
+
+        let tableObj = table.render({
+            elem: '#taskTable',
+            data: [],
+            toolbar: '#toolbarDemo',
+            cols:[
+                [
+                    {type:'checkbox', fixed: 'left'}
+                    ,{field:'customer',title:'客户', width:'12%'}
+                    ,{field:'orgCode',title:'发放网点', width:'12%'}
+                    ,{field:'desOrgCode',title:'目的网点', width:'12%'}
+                    ,{field:'expPro',title:'走件预览', width:'50%'}
+                    // ,{field:'user',title:'操作人', width:'10%'}
+                    ,{fixed:'right',align:'center', toolbar: '#barDemo',title:'操作',width:'10%'}
+                ]
+            ],
+            limit:10,
+            page:true
+        });
+
+        $(function(){
+           $('#select,#insert,#update,#delete').hide();
+        });
+
+        form.on('select(flag)',function (data) {
+           let value = data.value;
+           if (value === "SELECT"){
+               $('#select').show("slow");
+               $('#insert,#update,#delete').hide("slow");
+               $('#content').val('SELECT ');
+           }
+            if (value === "INSERT"){
+                $('#insert').show("slow");
+                $('#select,#update,#delete').hide("slow");
+                $('#content').val('INSERT ');
+            }
+            if (value === "DELETE"){
+                $('#delete').show("slow");
+                $('#insert,#update,#select').hide("slow");
+                $('#content').val('DELETE ');
+            }
+            if (value === "UPDATE"){
+                $('#update').show("slow");
+                $('#insert,#select,#delete').hide("slow");
+                $('#content').val('UPDATE ');
+            }
+        });
+
+
+        $('#tableName').blur(function () {
+
+            let table_name = '';
+            let table_flag = '';
+
+            if ($('#flag').val() === 'SELECT'){
+                table_name = ' * FROM ' + $('#tableName').val();
+                table_flag = 'SELECT ';
+                table_flag += table_name;
+                $('#content').val(table_flag + ' WHERE 1=1');
+            }else if ($('#flag').val() === 'INSERT'){
+                table_name = 'INTO ' + $('#tableName').val();
+                table_flag = 'INSERT ';
+                table_flag += table_name;
+                $('#content').val(table_flag);
+            }else if ($('#flag').val() === 'UPDATE'){
+                table_name = '' + $('#tableName').val();
+                table_flag = 'UPDATE ';
+                table_flag += table_name;
+                $('#content').val(table_flag);
+            }else if ($('#flag').val() === 'DELETE'){
+                table_name = 'FROM ' + $('#tableName').val();
+                table_flag = 'DELETE ';
+                table_flag += table_name;
+                $('#content').val(table_flag);
+            }
+
+            $.ajax({
+                url:'/Express/checkCol' + ff_flag,
+                data:JSON.stringify({
+                    dataBase:$('#dataBase').val(),
+                    tableName:$('#tableName').val()
+                }),
+                dataType: 'text',
+                contentType:'application/json;charset=UTF-8',
+                type:'post',
+                success:function (data) {
+                    document.getElementById("selectCol").options.length=0;
+                    $('#selectCol').append("<option value='*'>*</option>");
+                    for (myKey in JSON.parse(data)['data'][0]) {
+                        $('#selectCol').append("<option value='" + myKey + "'>" + myKey + "</option>");
+                    }
+                    form.render();
+                },
+                error:function (data) {
+                }
+            });
+        });
+
+        form.on('submit(selectColBtn)',function (data) {
+            let col = $('#selectCol').val();
+            let content = $('#content').val();
+            // let content = 'SELECT   FROM qwe';
+            let res = /SELECT (.*?) FROM /;
+            if (col === '*'){
+                $('#content').val(content.replace(content.match(res)[1],' *'));
+            }else {
+                if (content.match(res)[1] === ' *'||content.match(res)[1] === '*'){
+                    $('#content').val(content.replace(content.match(res)[1],col));
+                }else{
+                    $('#content').val(content.replace(content.match(res)[1],content.match(res)[1] + ',' +col));
+                }
+            }
+            return false;
+        });
+
+        form.on('submit(selectBtn)',function (data) {
+            let res = / WHERE (.*)/;///\sWHERE\s(.*?)/;+
+            let content = $('#content').val();
+            let colKey = $('#selectKey').val();
+            let colValue = $('#selectValue').val();
+            if (colKey === '*'){
+                $('#content').val(content.replace(content.match(res)[1],'1=1'));
+            } else {
+                if(content.match(res)[1].includes('1=1')){
+                    $('#content').val(content.replace(content.match(res)[1],
+                        content.match(res)[1]+" and "+colKey+"='"+colValue+"'"));
+                }
+            }
+            return false;
+        });
+
+        form.on('submit(insertBtn)',function (data) {
+
+            return false;
+        });
+
+        form.on('submit(deleteBtn)',function (data) {
+
+            return false;
+        });
+
+        form.on('submit(updateBtn)',function (data) {
+
+            return false;
+        });
+
+        form.on('submit(updateColBtn)',function (data) {
+
+            return false;
+        });
+        
+        
+
+        form.on('submit(add)',function (data) {
+            if (content !== ''){
+                let ct = $('#content');
+                contentTable = new EP($('#customer').val(),$('#sourceOrgCode').val(),$('#desOrgCode').val(),ct.val());
+                valueTable = table.cache['taskTable'];
+                valueTable.push(contentTable);
+                tableObj.reload({
+                    data:valueTable
+                });
+                ct.val('');
+                content = '';
+            }else {
+                layer.msg("走件不能为空！！");
+            }
+            return false;
+        });
+
+        table.on('toolbar(taskTable)', function(obj){
+            let checkStatus = table.checkStatus('taskTable');
+            switch(obj.event){
+                case 'uploadSelect':
+                    let test = {};
+                    let selectData = table.checkStatus('taskTable');
+                    let data = selectData.data;//表格中被选择的数据[{},{},{}........]
+                    console.log(selectData);
+                    test["batchData"] = data;
+                    let batchData = JSON.stringify(test);
+                    layer.msg('数据执行中，预计等待时间-->' + data.length * 10);
+                    $.ajax({
+                        data: batchData,
+                        dataType: 'text',
+                        contentType:'application/json;charset=UTF-8',
+                        type:'post',
+                        url:'/Express/batchAdd' + ff_flag,
+                        success: function (data) {
+                            layer.msg(data);
+                        },
+                        error: function () {
+                        }
+                    });
+                    break;
+                case 'deleteTable':
+                    let valueTable = [];
+                    table.reload('taskTable',{
+                        data:valueTable
+                    });
+                    break;
+            }
+        });
+        table.on('tool(taskTable)', function(obj){
+            if(obj.event === 'del'){
+                obj.del();
+            }
+            valueTable = table.cache['taskTable'];
+        });
+
+        function EP(customer,orgCode,desOrgCode,expPro) {
+            this.customer = customer;
+            this.orgCode = orgCode;
+            this.desOrgCode = desOrgCode;
+            this.expPro = expPro;
+        }
+    });
+</script>
+</body>
+</html>

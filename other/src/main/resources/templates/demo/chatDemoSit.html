@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<style>
+    .mybody{
+        width: 95.5%;
+        margin: auto;
+        margin-top: 20px;
+    }
+    body{
+        background-color: #f2f2f2;
+    }
+</style>
+<body class="mybody">
+<input type="hidden" th:value="${user}" id="user">
+<div>
+    <textarea placeholder="" class="layui-textarea" name="message1" style="height: 400px" id="message1" readonly
+    ></textarea>
+</div>
+<form class="layui-form" action="">
+    <div>
+        <textarea placeholder="" class="layui-textarea" name="message" style="height: 130px" id="message"></textarea>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <div style="padding-top: 10px;">
+                <button class="layui-btn-sm layui-btn-danger" id="sendMessage" lay-submit lay-filter="sendMessage">发送
+                </button>
+                <button class="layui-btn-sm layui-btn-danger" id="closeChat" lay-submit lay-filter="closeChat">断开连接
+                </button>
+                <button class="layui-btn-sm layui-btn-danger" id="reLinkChat" lay-submit lay-filter="reLinkChat">重新连接
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="layui/jquery-3.3.1.min.js"></script>
+<script src="layui/layui.js"></script>
+<script>
+    layui.use(['form'], function() {
+        let form = layui.form;
+
+        //user预分配
+        let user =
+            $('#user').val();
+            // $('#user').val()+Math.round((Math.random()) * 5 )+Math.round((Math.random()) * 5 );
+        //ajax长轮询接收消息，消息等待
+        $(function () {
+            poll();
+        });
+
+        //消息发送按钮
+        form.on('submit(sendMessage)',function (data) {
+            $.ajax({
+                url:"/Express/sendMessage",
+                type: "POST",
+                data: JSON.stringify({
+                    user:user,
+                    message:$('#message').val()
+                }),
+                success: function (data) {
+                    // let messageRes = JSON.parse(data);
+                    $('#message').val('');
+                    // $('#message1').val($('#message1').val() + messageRes.message);
+                },
+                dataType: "text",
+                contentType: 'application/json;charset=UTF-8',
+            });
+            return false;
+        });
+
+        form.on('submit(closeChat)',function (data) {
+            $.ajax({
+                url:"/Express/closeChat",
+                type: "POST",
+                data: JSON.stringify({
+                    user:user,
+                    message:$('#message').val()
+                }),
+                success: function (data) {
+                    // let messageRes = JSON.parse(data);
+                    // $('#message').val('');
+                    $('#message').val('你已断开连接！');
+                    $('#message').attr('readonly',true);
+                    $('#sendMessage').attr('disabled',true);
+                    // $('#message1').val($('#message1').val() + messageRes.message);
+                },
+                dataType: "text",
+                contentType: 'application/json;charset=UTF-8',
+            });
+            // let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            // parent.layer.close(index); //再执行关闭
+            return false;
+        });
+
+        form.on('submit(reLinkChat)',function (data) {
+            $.ajax({
+                url:"/Express/reLinkChat",
+                type: "POST",
+                data: JSON.stringify({
+                    user:user,
+                }),
+                success: function (data) {
+                    $('#message').val('');
+                    $('#message').attr('readonly',false);
+                    $('#sendMessage').attr('disabled',false
+                    );
+                },
+                dataType: "text",
+                contentType: 'application/json;charset=UTF-8',
+            });
+            return false;
+        });
+
+        function poll() {
+            $.ajax({
+                url:'/Express/waitMessage',
+                type: 'POST',
+                data:JSON.stringify({
+                    user:user,
+                    timeout:"5000"
+                }),
+                dataType: 'text',
+                contentType: 'application/json;charset=UTF-8',
+                success: function (data) {
+                    let messageRes = JSON.parse(data);
+                    console.log(messageRes);
+                    let oldMessage = $('#message1').val();
+                    $('#message1').val(oldMessage + messageRes.user + '：' + messageRes.message);
+                    poll();
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

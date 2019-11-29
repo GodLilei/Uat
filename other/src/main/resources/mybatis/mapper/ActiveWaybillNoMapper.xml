@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myproject.demo.dao.ActiveWayBillNoDao">
+    <select id="checkActive" resultType="com.myproject.demo.entity.ActiveWayBillNo">
+        select * from ${active.tableName} where waybill_no = #{active.waybill_no}
+    </select>
+    <insert id="addActive">
+        insert into ${active.tableName}(
+        	waybill_no,
+            mat_create_time,
+            mat_org_code,
+            mat_expire_time,
+            pid,
+            taking_time,
+            delivery_time,
+            delivery_count,
+            delivery_signoff_flag,
+            signoff_time,
+            signoff_upload_time,
+            create_time,
+            modify_time,
+            rowid_exp_digest,
+            order_create_time
+        )values (
+            #{active.waybill_no},
+            TO_DATE(#{active.mat_create_time},'YYYY-mm-dd HH24:MI:SS'),
+            #{active.mat_org_code},
+            TO_DATE(#{active.mat_expire_time},'YYYY-mm-dd HH24:MI:SS'),
+            NULL,
+            NULL,
+            NULL,
+            '0',
+            '0',
+            NULL,
+            NULL,
+            TO_DATE(#{active.create_time},'YYYY-mm-dd HH24:MI:SS'),
+            TO_DATE(#{active.modify_time},'YYYY-mm-dd HH24:MI:SS'),
+            NULL,
+            NULL
+        )
+    </insert>
+    <update id="pwReset">
+        UPDATE ytmdm.t_mdm_user T
+        SET T .user_pwd = 'r90LStLsFyxYbiFQdw+/ng==',
+         T .description = 'Aa123456'
+        WHERE
+            T .user_id IN (
+                SELECT
+                    ID
+                FROM
+                    ytmdm.t_mdm_employee E
+                WHERE
+                    E .code = #{code}
+            )
+    </update>
+    <select id="checkMenu" resultType="com.myproject.demo.entity.CheckMenu">
+        select t.location, t.parent_menu_id, t.menu_level, t.app_id, t.menu_name
+          from ytmdm.t_mdm_menu t
+        where t.menu_title like '%${menu}%'
+    </select>
+    <select id="checkAppId" resultType="com.myproject.demo.entity.CheckMenu">
+        select t.app_id
+          from ytmdm.t_mdm_menu t
+        where t.menu_id = #{parentMenuId}
+    </select>
+    <select id="checkAppName" resultType="com.myproject.demo.entity.CheckMenu">
+        select t.app_name
+          from ytmdm.t_mdm_app t
+        where app_id = #{appId}
+
+    </select>
+</mapper>
