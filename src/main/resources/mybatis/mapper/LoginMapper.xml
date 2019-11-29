@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stl.project.dao.LoginDao">
+    <select id="normalLogin" resultType="com.stl.project.entity.LoginPojo">
+        select * from suser where phone = #{param}
+    </select>
+    <select id="fastLogin" resultType="com.stl.project.entity.LoginPojo">
+        select * from suser where ipaddr = #{param}
+    </select>
+    <select id="queryIP" resultType="com.stl.project.entity.LoginPojo">
+        select * from suser
+        <where>
+            <if test="param.phone !='' and param.phone != null">
+                phone=#{param.phone}
+            </if>
+            <if test="param.ipaddr != '' and param.ipaddr != null">
+                and ipaddr=#{param.ipaddr}
+            </if>
+        </where>
+    </select>
+</mapper>

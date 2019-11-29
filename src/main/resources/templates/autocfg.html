@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<style>
+    .mybody {
+        width: 98.5%;
+        margin: 10px 10px auto;
+    }
+
+    html, body {
+        width: 100%;
+        height: 95%
+    }
+</style>
+<body class="mybody">
+
+<script src="layui/jquery-3.3.1.min.js"></script>
+<script src="layui/layui.js"></script>
+<script>
+    layui.use(['layer', 'form', 'table'], function () {
+        let layer = layui.layer;
+        let table = layui.table;
+        let form = layui.form;
+    });
+</script>
+</body>
+</html>

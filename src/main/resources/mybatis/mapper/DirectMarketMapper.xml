@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stl.project.dao.businessdao.DirectMarketDao">
+    <select id="directCheck" resultType="com.stl.project.entity.businessentity.DirectMarket">
+    SELECT
+    id,
+	customer_code,
+	market_code,
+	settle_target,
+	settle_fee_flag,
+	oper_code,
+	trans_fee_node,
+	settle_cycle,
+	return_charge_flag,
+	weight_model
+FROM
+	ytmdm.t_mdm_direct_market_maintain
+WHERE
+	CUSTOMER_CODE = #{cus}
+AND date'${date}' BETWEEN USED_START_TIME
+AND USED_END_TIME
+    </select>
+	<update id="updateDirect">
+		update ytmdm.t_mdm_direct_market_maintain set
+		market_code = #{param.market_code},
+		settle_target = #{param.settle_target},
+		settle_fee_flag = #{param.settle_fee_flag},
+		oper_code = #{param.oper_code},
+		trans_fee_node = #{param.trans_fee_node},
+		settle_cycle = #{param.settle_cycle},
+		return_charge_flag = #{param.return_charge_flag},
+		weight_model = #{param.weight_model}
+		where
+		id = #{param.id} and customer_code = #{param.customer_code}
+	</update>
+	<insert id="insertDirect">
+		insert into ytmdm.t_mdm_direct_market_maintain values (
+			#{param.id},
+			#{param.customer_code},
+			'客户名称A',
+			#{param.market_code},
+			'市场部名称B',
+			#{param.settle_target},
+			#{param.settle_fee_flag},
+			#{param.oper_code},
+			'操作分公司名称C',
+			'0',
+			#{param.trans_fee_node},
+			#{param.settle_cycle},
+			#{param.return_charge_flag},
+			to_date('2019-08-03 00:00:00','yyyy-MM-dd hh24:mi:ss'),
+			to_date('2020-08-03 00:00:00','yyyy-MM-dd hh24:mi:ss'),
+			to_date('2019-08-03 00:00:00','yyyy-MM-dd hh24:mi:ss'),
+			'admin',
+			'admin',
+			'999999',
+			'总公司',
+			to_date('2019-08-03 00:00:00','yyyy-MM-dd hh24:mi:ss'),
+			'admin',
+			'admin',
+			'999999',
+			'总公司',
+			'2',
+			to_date('2019-08-03 00:00:00','yyyy-MM-dd hh24:mi:ss'),
+			'admin',
+			'admin',
+			'999999',
+			'总公司',
+			'0',
+			#{param.weight_model}
+		)
+	</insert>
+</mapper>

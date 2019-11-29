@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stl.project.dao.MaterialDao">
+    <select id="checkActive" resultType="com.stl.project.entity.ActiveMaterial">
+        select waybill_no from ${param} where waybill_no = #{array}
+    </select>
+    <insert id="activeOne">
+        insert into ${param.tableName}(
+        	waybill_no,
+            mat_create_time,
+            mat_org_code,
+            mat_expire_time,
+            pid,
+            taking_time,
+            delivery_time,
+            delivery_count,
+            delivery_signoff_flag,
+            signoff_time,
+            signoff_upload_time,
+            create_time,
+            modify_time,
+            rowid_exp_digest,
+            order_create_time
+        )values (
+            #{param.waybill_no},
+            TO_DATE(#{param.mat_create_time},'YYYY-mm-dd HH24:MI:SS'),
+            #{param.mat_org_code},
+            TO_DATE(#{param.mat_expire_time},'YYYY-mm-dd HH24:MI:SS'),
+            NULL,
+            NULL,
+            NULL,
+            '0',
+            '0',
+            NULL,
+            NULL,
+            TO_DATE(#{param.create_time},'YYYY-mm-dd HH24:MI:SS'),
+            TO_DATE(#{param.modify_time},'YYYY-mm-dd HH24:MI:SS'),
+            NULL,
+            NULL
+        )
+    </insert>
+</mapper>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<style>
+    .mybody {
+        width: 98.5%;
+        margin: 10px 10px auto;
+    }
+
+    html, body {
+        width: 100%;
+        height: 95%
+    }
+</style>
+<body class="mybody">
+<form class="layui-form layui-form-pane" action="">
+    <div>
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend style="color: red"><span>直营市场部客户配置信息</span></legend>
+        </fieldset>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">客户编码</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="customer_code" name="customer_code" value="K21002160">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">市场部</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="market_code" name="market_code" value="210077">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">操作公司</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="oper_code" name="oper_code" value="210077">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">结算对象</label>
+            <div class="layui-input-inline">
+                <label for="settle_target"></label>
+                <select name="settle_target" id="settle_target" lay-filter="settle_target">
+                    <option value="0" selected>与分公司结算</option>
+                    <option value="1">与客户结算</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">结算费用</label>
+            <div class="layui-input-inline">
+                <label for="settle_fee_flag"></label>
+                <select name="settle_fee_flag" id="settle_fee_flag" lay-filter="settle_fee_flag">
+                    <option value="0" selected>快递费</option>
+                    <option value="1">快递费和操作费</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">结算周期</label>
+            <div class="layui-input-inline">
+                <label for="settle_cycle"></label>
+                <select name="settle_cycle" id="settle_cycle" lay-filter="settle_cycle">
+                    <option value="C01" selected>日结</option>
+                    <option value="C02">周结</option>
+                    <option value="C03">半月结</option>
+                    <option value="C04" selected>月结</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">计费节点</label>
+            <div class="layui-input-inline">
+                <label for="trans_fee_node"></label>
+                <select name="trans_fee_node" id="trans_fee_node" lay-filter="trans_fee_node">
+                    <option value="0" selected>揽收计费</option>
+                    <option value="1">中心下车计费</option>
+                    <option value="2">签收计费</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">重量模式</label>
+            <div class="layui-input-inline">
+                <label for="weight_model"></label>
+                <select name="weight_model" id="weight_model" lay-filter="weight_model">
+                    <option value="0" selected>揽收重量</option>
+                    <option value="1">中转费重量</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">退回标识</label>
+            <div class="layui-input-inline">
+                <label for="return_charge_flag"></label>
+                <select name="return_charge_flag" id="return_charge_flag" lay-filter="return_charge_flag">
+                    <option value="0" selected>计费</option>
+                    <option value="1">不计费</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-warm" id="startCfg" lay-submit lay-filter="startCfg">开始配置</button>
+            <button class="layui-btn layui-btn-warm" id="endCfg" lay-submit lay-filter="endCfg">停止配置</button>
+            <button class="layui-btn layui-btn-danger" id="flag" lay-submit lay-filter="flag">信息确认</button>
+        </div>
+    </div>
+</form>
+<div>
+    <textarea placeholder="" class="layui-textarea" name="message" style="height: 400px" id="message" readonly></textarea>
+</div>
+<script src="layui/jquery-3.3.1.min.js"></script>
+<script src="layui/layui.js"></script>
+<script>
+    layui.use(['layer', 'form', 'table'], function () {
+        let layer = layui.layer;
+        let table = layui.table;
+        let form = layui.form;
+
+        form.on('submit(flag)',function () {
+            poll();
+            return false;
+        });
+
+        form.on('submit(startCfg)',function (data) {
+            $.ajax({
+                url:'/Express/directCheck',
+                data:JSON.stringify(data.field),
+                type:'post',
+                dataType:'text',
+                contentType:'application/json;charset=UTF-8',
+                success:function (res) {
+                } ,
+                error:function () {
+                }
+            });
+            return false;
+        });
+        form.on('submit(endCfg)',function (data) {
+            $.ajax({
+                url:'/Express/endConfig',
+                data:JSON.stringify(data.field),
+                type:'post',
+                dataType:'text',
+                contentType:'application/json;charset=UTF-8',
+                success:function (res) {
+                },
+                error:function (res) {
+                }
+            });
+            return false;
+        });
+
+        function poll() {
+            $.ajax({
+                url:'/Express/configStart',
+                data:JSON.stringify({
+                    cus:$('#customer_code').val(),
+                    timeout:"1000"
+                }),
+                type:'post',
+                dataType:'text',
+                contentType:'application/json;charset=UTF-8',
+                success:function (res) {
+                    console.log(res);
+                    let msgRes = JSON.parse(res);
+                    let oldMsg = $('#message').val();
+                    $('#message').val(oldMsg + msgRes.message);
+                    if (msgRes.code === '0'){
+                        poll();
+                    }
+                },
+                error:function (res) {
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

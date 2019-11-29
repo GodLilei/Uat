@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>uat</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<style>
+    .mybody {
+        width: 98.5%;
+        margin: 10px 10px auto;
+    }
+
+    html, body {
+        width: 100%;
+        height: 95%
+    }
+</style>
+<body class="mybody">
+<form class="layui-form layui-form-pane" action="">
+    <div>
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend style="color: red"><span>UAT环境管理</span></legend>
+        </fieldset>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">应用类型</label>
+            <div class="layui-input-inline">
+                <label for="app_type"></label>
+                <select name="app_type" id="app_type" lay-filter="app_type">
+                    <option value="">请选择</option>
+                    <option value="web">WEB</option>
+                    <option value="job">JOB</option>
+                    <option value="interface">接口</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">应用名称</label>
+            <div class="layui-input-inline">
+                <label for="app_name"></label>
+                <select name="app_name" id="app_name" lay-filter="app_name" lay-search="">
+                    <option value=""></option>
+                </select>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="layui/jquery-3.3.1.min.js"></script>
+<script src="layui/layui.js"></script>
+<script>
+    layui.use(['layer', 'form', 'table'], function () {
+        let layer = layui.layer;
+        let table = layui.table;
+        let form = layui.form;
+    });
+</script>
+</body>
+</html>

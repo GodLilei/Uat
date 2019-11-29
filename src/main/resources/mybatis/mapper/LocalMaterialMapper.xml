@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stl.project.dao.LocalMaterialDao">
+    <select id="findMaterial" resultType="com.stl.project.entity.LocalMaterial">
+        select * from material
+        <where>
+            <if test="param.materialType !='' and param.materialType != null">
+                materialType=#{param.materialType}
+            </if>
+            <if test="param.materialOrg != '' and param.materialOrg != null">
+                and materialOrg=#{param.materialOrg}
+            </if>
+            <if test="param.materialCus != '' and param.materialCus != null">
+                and materialCus=#{param.materialCus}
+            </if>
+            <if test="true">
+                and isUse='0'
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+    <update id="matUsed">
+        update material set isUse = '1' where waybill=#{param}
+    </update>
+    <select id="checkMat" resultType="com.stl.project.entity.LocalMaterial">
+        select * from material where waybill=#{param}
+    </select>
+    <insert id="saveMat">
+        insert into material values (
+            #{param.waybill},
+            #{param.materialOrg},
+            #{param.materialCus},
+            #{param.create_time},
+            #{param.materialType},
+            '0'
+        )
+    </insert>
+</mapper>

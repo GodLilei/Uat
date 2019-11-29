@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>material</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<style>
+    .mybody{
+        width: 98.5%;
+        margin: 10px 10px auto;
+    }
+    html,body{
+        width:100%;
+        height:100%
+    }
+</style>
+<body class="mybody">
+<form class="layui-form layui-form-pane" action="">
+    <div>
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend style="color: red"><span>物料激活</span></legend>
+        </fieldset>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">激活单号</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activeWaybill" id="activeWaybill" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">激活网点</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activeOrg" value="210077" id="activeOrg" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-radius" id="activeOneBtn" lay-submit lay-filter="activeOneBtn">激活</button>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">批量激活</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activeWaybill_2" id="activeWaybill_2" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">激活网点</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activeOrg_2" id="activeOrg_2" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">数量</label>
+            <div class="layui-input-inline">
+                <input type="text" name="num" value="1" id="num" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-radius" id="activeMoreBtn" lay-submit lay-filter="activeMoreBtn">激活</button>
+        </div>
+    </div>
+</form>
+<form class="layui-form layui-form-pane" action="">
+    <div>
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend style="color: red"><span>非电子面单仓库</span></legend>
+        </fieldset>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">物料类型</label>
+            <div class="layui-input-inline">
+                <select name="materialType" id="materialType" lay-filter="materialType">
+                    <option value="">请选择</option>
+                    <option value="normal">普通面单</option>
+                    <option value="yt1">YT1面单</option>
+                    <option value="yt2">YT2面单</option>
+                    <option value="yt3">YT3面单</option>
+                    <option value="yt4">YT4面单</option>
+                    <option value="yt9">YT9面单</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">物料网点</label>
+            <div class="layui-input-inline">
+                <input type="text" name="materialOrg" id="materialOrg" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">物料客户</label>
+            <div class="layui-input-inline">
+                <input type="text" name="materialCus" id="materialCus" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-radius" id="materialBtn" lay-submit lay-filter="materialBtn">查找</button>
+        </div>
+    </div>
+</form>
+<table class="layui-table" lay-filter="materialDetail" id="materialDetail"></table>
+<script type="text/html" id="matType">
+    {{#  if(d.materialType === 'normal'){  }}
+    <span style="color: #F581B1;">{{ d.materialType = '普通面单' }}</span>
+    {{#  } else if(d.materialType === 'yt1'){  }}
+    <span style="color: #f5cc67;">{{ d.materialType = 'YT1面单' }}</span>
+    {{#  } else if(d.materialType === 'yt2'){  }}
+    <span style="color: #7da8f5;">{{ d.materialType = 'YT2面单' }}</span>
+    {{#  } else if(d.materialType === 'yt3'){  }}
+    <span style="color: #33f586;">{{ d.materialType = 'YT3面单' }}</span>
+    {{#  } else if(d.materialType === 'yt4'){  }}
+    <span style="color: #f58b2b;">{{ d.materialType = 'YT4面单' }}</span>
+    {{#  } else if(d.materialType === 'yt9'){  }}
+    <span style="color: #2d38f5;">{{ d.materialType = 'YT9面单' }}</span>
+    {{#  }  }}
+</script>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="addMat">入库</button>
+    </div>
+</script>
+<script src="layui/jquery-3.3.1.min.js"></script>
+<script src="layui/layui.js"></script>
+<script>
+    layui.use(['table','layer','form'], function(){
+        let table = layui.table;
+        let form = layui.form;
+        let layer = layui.layer;
+
+        let tab = table.render({
+            elem: '#materialDetail',
+            data:'',
+            toolbar: '#toolbarDemo',
+            cellMinWidth: 80,
+            cols:[
+                [
+                    {type:'checkbox', fixed: 'left'}
+                    ,{field:'waybill',title:'单号',align:'center',event:'chooseMat'}
+                    ,{field:'materialType',title:'物料类型', align:'center',templet: '#matType'}
+                    ,{field:'materialOrg',title:'物料网点',align:'center'}
+                    ,{field:'materialCus',title:'发放客户', align:'center'}
+                    // ,{field:'operate',title:'走件操作', align:'left' ,width:'40%',event:'expPro'}
+                    ,{field:'create_time',title:'保存时间', align:'center'}
+                    // ,{fixed: 'right',align:'center', toolbar: '#barDemo',title:'操作', width:100}
+                ]
+            ]
+            ,page:true
+            ,limit:30
+        });
+
+        //行工具事件
+        table.on('tool(materialDetail)', function(obj){
+            if (obj.event === 'chooseMat'){
+                let wb = obj.data.waybill;
+                $('#activeWaybill').val(wb);
+                layer.open({
+                    type: 1
+                    ,title: '物料选择'
+                    ,area: '300px;'
+                    ,shade: 0.2
+                    ,btn:['复制','取消']
+                    ,btnAlign: 'r'
+                    ,moveType: 1 //拖拽模式，0或者1
+                    ,content: '<div style="text-align: center;font-size: 1.2em;padding-top: 15px">'
+                    + wb
+                    + '</div>'
+                    ,yes:function (index) {
+                        layer.close(index);
+                        $.ajax({
+                            url:'/Express/matUsed',
+                            data:wb,
+                            type:'post',
+                            dataType:'text',
+                            contentType:'application/json;charset=UTF-8',
+                            success:function (res) {
+                                layer.msg(JSON.parse(res).data[0].msg + ',可直接[Ctrl+V]粘贴');
+                                reloadMatTable();
+                                $('#activeWaybill').select();
+                                document.execCommand("Copy");
+                            },
+                            error:function (res) {
+
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        table.on('toolbar(materialDetail)',function (obj) {
+            console.log('123');
+            if (obj.event === 'addMat'){
+                layer.open({
+                    type:2
+                    ,title:'添加物料'
+                    ,area: ['1000px', '470px']
+                    ,skin: 'demo-class'
+                    ,offset: '10px'
+                    ,maxmin: false
+                    ,anim: 1
+                    ,resize:false
+                    ,content: '/addMat'
+                    ,shade:0
+                });
+            }
+        });
+        
+        form.on('submit(activeOneBtn)',function (data) {
+            $.ajax({
+                url:'/Express/activeOne',
+                data:JSON.stringify({
+                    waybill_no:data.field.activeWaybill,
+                    mat_org_code:data.field.activeOrg
+                }),
+                dataType: 'text',
+                contentType:'application/json;charset=UTF-8',
+                type:'post',
+                success:function (res) {
+                    let materialRes = JSON.parse(res);
+                    layer.alert(materialRes.data[0].msg);
+                },
+                error:function (res) {
+
+                }
+            });
+            return false;
+        });
+        form.on('submit(activeMoreBtn)',function (data) {
+            $.ajax({
+                url:'/Express/activeMore',
+                data:JSON.stringify({
+                    waybill_no:data.field.activeWaybill_2,
+                    mat_org_code:data.field.activeOrg_2,
+                    num:data.field.num
+                }),
+                dataType: 'text',
+                contentType:'application/json;charset=UTF-8',
+                type:'post',
+                success:function (res) {
+                    let materialRes = JSON.parse(res);
+                    layer.alert(materialRes.data[0].msg);
+                },
+                error:function (res) {
+
+                }
+            });
+            return false;
+        });
+        form.on('submit(materialBtn)',function (data) {
+            reloadMatTable();
+            return false;
+        });
+
+        function reloadMatTable() {
+            $.ajax({
+                url:'/Express/materialFind',
+                data:JSON.stringify({
+                    materialType:$('#materialType').val(),
+                    materialOrg:$('#materialOrg').val(),
+                    materialCus:$('#materialCus').val()
+                }),
+                dataType: 'text',
+                contentType:'application/json;charset=UTF-8',
+                type:'post',
+                success:function (res) {
+                    let materialRes = JSON.parse(res);
+                    tab.reload({
+                        data:materialRes
+                    });
+                },
+                error:function (res) {
+
+                }
+            });
+        }
+    })
+</script>
+</body>
+</html>

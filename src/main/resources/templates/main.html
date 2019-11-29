@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>小小金刚</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<style>
+    .myicon{
+        font-size: 1.2em;
+        font-weight: lighter;
+        padding-right: 10px;
+    }
+
+    .layui-nav-tree .layui-nav-item a {
+        position: relative;
+        height: 60px;
+        line-height: 60px;
+        text-overflow: ellipsis;
+        /*overflow:文本溢出时触发的事件*/
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    /*.layui-layout-left .layui-nav-item a{*/
+    /*width: 40px;*/
+    /*}*/
+    .layui-layout-left .layui-nav-item a i{
+        padding-left: 10px;
+    }
+</style>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">STL-FINANCE</div>
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item newTab"><a href="javascript:;" id="ip-cfg" name="IP管理">IP管理</a></li>
+            <li class="layui-nav-item newTab"><a href="javascript:;" id="material-cfg" name="物料管理">物料管理</a></li>
+            <li class="layui-nav-item newTab"><a href="javascript:;" id="auto-cfg" name="自动化管理">自动化管理</a></li>
+            <li class="layui-nav-item"><a href="#" id="refresh" name="刷新">刷新</a></li>
+            <li class="layui-nav-item newTab"><a href="javascript:;" id="uat" name="UAT管理">UAT管理</a></li>
+            <li class="layui-nav-item">
+                <a href="javascript:;">原系统入口</a>
+                <dl class="layui-nav-child">
+                    <dd><a href="http://172.16.51.37:8080/Express/mainframe/ExpressSit" target="_blank">子系统简易版</a></dd>
+                </dl>
+            </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    <span id="userLogin"></span>
+                </a>
+                <!--<dl class="layui-nav-child">-->
+                    <!--<dd><a href="javascript:;" id="123" name="基本资料">基本资料</a></dd>-->
+                    <!--<dd><a href="javascript:;" id="456" name="安全设置">安全设置</a></dd>-->
+                <!--</dl>-->
+            </li>
+            <li class="layui-nav-item"><a href="/login" id="logout">退出</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">走件流程操作</a>
+                    <dl class="layui-nav-child newTab">
+                        <dd><a href="javascript:;" id="express" name="走件操作">走件操作</a></dd>
+                        <dd><a href="javascript:;" id="express-record" name="走件本地记录">走件本地记录</a></dd>
+                        <dd><a href="javascript:;" id="express-check" name="单号走件检测">单号走件检测</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">财务模块信息配置</a>
+                    <dl class="layui-nav-child newTab">
+                        <dd><a href="javascript:;" id="price" name="新价格管理">新价格管理</a></dd>
+                        <dd><a href="javascript:;" id="direct" name="直营市场部管理">直营市场部管理</a></dd>
+                        <dd><a href="javascript:;" id="policy" name="中转费政策管理">中转费政策管理</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">其他</a>
+                    <dl class="layui-nav-child newTab">
+                        <dd><a href="javascript:;" id="self-cfg" name="个人设置">个人设置</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="layui-body" id="rightBtn">
+        <div class="layui-tab" lay-allowclose="true" lay-filter="myTab">
+            <ul class="layui-tab-title" id="myTab">
+                <li class="layui-this" lay-id="firstpage">测试首页</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <iframe data-frameid="baidu" scrolling="auto" frameborder="0" src="https://www.baidu.com"
+                            style="width:100%;height:auto;">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © V2.0 @YTO-LL 版权所有
+    </div>
+</div>
+<script src="layui/layui.js"></script>
+<script src="layui/cookie.js"></script>
+<script>
+    //JavaScript代码区域
+    layui.config({
+        base: 'layui/module/',
+    }).use(['element','layer','tabrightmenu'], function(){
+        let element = layui.element;
+        let layer = layui.layer;
+        let $ = layui.jquery;
+        let rightmenu_ = layui.tabrightmenu;
+        // 默认方式渲染全部：关闭当前（closethis）、关闭所有（closeall）、关闭其它（closeothers）、关闭左侧所有（closeleft）、关闭右侧所有（closeright）、刷新当前页（refresh）
+        // rightmenu_.render({
+        //     container: '#rightBtn',
+        //     filter: 'myTab',
+        // });
+        // tabRender();
+
+        $('#refresh').click(function () {
+            refreshiFrame();
+        });
+
+        $('#userLogin').text(getCookie("name"));
+
+        let layid = location.hash.replace(/^#menu=/, '');
+        // element.tabChange('test', layid);
+        element.on('tab(myTab)', function(elem){
+            location.hash = 'menu='+ $(this).attr('lay-id');//点击一下，变换hash值
+        });
+
+        FrameWH();
+
+        // $('#express,#express-record,#material-cfg,#auto-cfg,#ip-cfg,#express-check,#search,#direct,#price,#policy').click(function () {
+        $('.newTab a').click(function () {
+            let that = this;
+            let list = $('.layui-tab-title li');
+            let isExit = false;
+            let myHtml = '<iframe data-frameid="'+that.id+'" scrolling="auto" frameborder="0" style="width:100%;height:99%;"></iframe>';
+            $.map(list, function(item,idx) {
+                if(item.getAttribute('lay-id') === that.id){
+                    isExit = true;
+                }
+            });
+            if (!isExit){
+                element.tabAdd('myTab', {
+                    title:that.name,
+                    content:
+                    '<iframe data-frameid="'+that.id+'" scrolling="auto" frameborder="0" src="' + that.id +
+                    '" style="width:100%;height:auto;"></iframe>',
+                    // '<iframe data-frameid="'+that.id+'" scrolling="auto" frameborder="0" src="https://www.baidu.com" style="width:100%;height:auto;"></iframe>',
+                    id: that.id //规定好的id
+                });
+                element.tabChange('myTab',that.id);
+            }else{
+                element.tabChange('myTab',that.id);
+            }
+            // tabRender();
+            FrameWH();
+        });
+        $('#logout').click(function () {
+            delCookie("name");
+        });
+        function FrameWH() {
+            let h = $(window).height() - 189;
+            $("iframe").css("height", h + "px");
+        }
+        $(window).resize(function () {
+            FrameWH();
+        });
+        function delCookie(name){
+            let exp = new Date();
+            exp.setTime(exp.getTime() - 1);
+            let cval = getCookie(name);
+            if (cval != null)
+                document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString()+";path=/";
+        }
+        function tabRender() {
+            rightmenu_.render({
+                container: '#rightBtn',
+                filter: 'myTab',
+                // navArr：对象数组，每个对象包含dataType、title、method属性
+                navArr: [
+                    // {eventName: 'closethis', title: '关闭当前'},
+                    // {eventName: 'closeall', title: '关闭所有'},
+                    {eventName: 'refresh', title: '刷新当前页'},
+                    //自定义菜单项，此时dataType属性表示自定义事件
+                    // {title: "测试", eventName: 'test'},
+                    // {title: "测试2", eventName: 'test2'},
+                ],
+                // 注册自定义事件
+                // registMethod: {'test': testMethod, 'test2': test2Method}
+            })
+        }
+        let refreshiFrame = function () {
+            let $curFrame = $('iframe:visible');
+            $curFrame.attr("src", $curFrame.attr("src"));
+            return false;
+        };
+    });
+</script>
+</body>
+</html>
